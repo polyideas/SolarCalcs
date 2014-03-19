@@ -1,0 +1,3 @@
+define tan(x){
+	return s(x)/c(x);
+}

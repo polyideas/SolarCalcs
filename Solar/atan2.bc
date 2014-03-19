@@ -1,0 +1,44 @@
+define sgn(x) {
+        if (x == 0) {
+                return(0);
+        } else if (x < 0) {
+                return(-1);
+        } else if (x > 0) {
+                return(1);
+        }
+}
+ 
+define abs(x) {
+        if (x < 0) {
+                return(-1 * x);
+        } else {
+                return(x);
+        }
+}
+ 
+define atan2(y, x) {
+        auto pi, fi;
+ 
+        pi = 4 * a(1);
+ 
+        if (y == 0) {
+                if (x > 0) {
+                        return(0);
+                } else if (x == 0) {
+                        print "undefined\n";
+                        halt;
+                } else if (x < 0) {
+                        return(pi);
+                }
+        }
+ 
+        fi = a(abs(y/x));
+ 
+        if (x > 0) {
+                return(fi * sgn(y));
+        } else if (x == 0) {
+                return(pi * sgn(y) / 2);
+        } else if (x < 0) {
+                return((pi - fi) * sgn(y));
+        }
+}
