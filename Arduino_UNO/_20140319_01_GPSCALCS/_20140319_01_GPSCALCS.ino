@@ -67,19 +67,25 @@ void loop()                     // The main loop
   int intMinute = 22;
   Longitude = -117.123;
   Latitude = 33.123;
-  fltHrs = (intHour + (intMinute/60));
-  fltMins = (fltHrs/24);
+  float fltMins = ((float)intMinute / 60)/24;
+  
+  float fltHrs = (float)intHour / 24;
+  float fltDayDecimal = fltHrs + fltMins;
 
+  long centuries = intYear/100;
+  long leaps = centuries/4;                            
+  long leapDays = 2 - centuries + leaps;         // note is negative!!
+  long yearDays = 365.25 * (intYear + 4716);     // days until 1 jan this year
+  long monthDays = 30.6001* (intMonth + 1);    // days until 1st month
+  float JulianResult = leapDays + intDay + monthDays + yearDays -1524.5;
+JulianDay = (float)JulianResult + fltDayDecimal;
 
-  //Calculate the Julian Day
-//  JulianDay = (intDay + (fltHrs/24)) + (((153*(intMonth + (12 * ((14-intMonth)/12)) -3))+2)/5) + (365 * ((intYear + 4800) - ((14-intMonth)/12))) + (((intYear + 4800) - ((14-intMonth)/12))/4) - (((intYear + 4800) - ((14-intMonth)/12))/100) + (((intYear + 4800) - ((14-intMonth)/12))/400) -32045;
-JulianDay = 2456751.18;
-  Serial.print("JulianDay=");
+ Serial.print("JulianDay=");
   Serial.println(JulianDay);
 
 
   JulianCentury = (JulianDay-2451545)/36525;
-//JulianCentury = 0.14253749;
+
 
   Serial.print("JulianCentury=");
   Serial.println(JulianCentury); 
@@ -124,11 +130,7 @@ JulianDay = 2456751.18;
   Serial.print("ObliqCorr=");
   Serial.println(ObliqCorr); 
 
-
-SunRtAscen=`echo "(atan2(c($R2*$PI/180),c($P2*$PI/180))*s($P2*$PI/180))*180/$PI" | bc -l atan2.bc`
-=DEGREES(ATAN2(COS(RADIANS(P2)),COS(RADIANS(R2))*SIN(RADIANS(P2))))
-
-  SunRtAscen = degrees(atan2(cos(radians(SunAppLong)),cos(radians(ObliqCorr))*sin(radians(SunAppLong))));
+  SunRtAscen = degrees(atan2(cos(radians(23.4352061926769))*sin(radians(13.8366518589196)),cos(radians(13.8366518589196))));
   Serial.print("SunRtAscen=");
   Serial.println(SunRtAscen); 
 
@@ -147,11 +149,12 @@ SunRtAscen=`echo "(atan2(c($R2*$PI/180),c($P2*$PI/180))*s($P2*$PI/180))*180/$PI"
   HASunrise = degrees(acos(cos(radians(90.833))/(cos(radians(Latitude))*cos(radians(SunDeclin)))-tan(radians(Latitude))*tan(radians(SunDeclin))));
   Serial.print("HASunrise=");
   Serial.println(HASunrise); 
+  
+  TrueSolarTime = fmod((fltDayDecimal*1440)+EqOfTime+(4*Longitude),1440);
 
-  TrueSolarTime = fmod((fltMins*1440)+EqOfTime+(4*Longitude),1440);
   Serial.print("TrueSolarTime=");
   Serial.println(TrueSolarTime); 
-
+  
   if (TrueSolarTime/4<0){ 
     HourAngle = (TrueSolarTime/4+180);
   }
